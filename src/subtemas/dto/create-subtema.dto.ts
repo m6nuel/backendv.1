@@ -1,1 +1,6 @@
-export class CreateSubtemaDto {}
+import { IsString } from 'class-validator';
+
+export class CreateSubtemaDto {
+  @IsString()
+  subtema: string;
+}
