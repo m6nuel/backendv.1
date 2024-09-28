@@ -14,8 +14,11 @@ export class User {
   @Column()
   name: string;
 
+  @Column()
+  email: string;
+
   @CreateDateColumn()
-  create: Date;
+  created: Date;
 
   @DeleteDateColumn()
   deleted: Date;
