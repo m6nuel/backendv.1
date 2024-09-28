@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateTemaDto } from './dto/create-tema.dto';
 import { UpdateTemaDto } from './dto/update-tema.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Tema } from './entities/tema.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TemasService {
-  create(createTemaDto: CreateTemaDto) {
-    return 'This action adds a new tema';
+  constructor(
+    @InjectRepository(Tema)
+    private readonly temaRepository: Repository<Tema>,
+  ) {}
+  async create(createTemaDto: CreateTemaDto) {
+    return await this.temaRepository.save(createTemaDto);
   }
 
-  findAll() {
-    return `This action returns all temas`;
+  async findAll() {
+    return await this.temaRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tema`;
+  async findOne(id: number) {
+    const search = await this.temaRepository.findOneBy({ id });
+    if (!search) {
+      throw new BadRequestException('No se encontro el tema solicitado');
+    }
+    return search;
   }
 
-  update(id: number, updateTemaDto: UpdateTemaDto) {
-    return `This action updates a #${id} tema`;
+  async update(id: number, updateTemaDto: UpdateTemaDto) {
+    await this.findOne(id);
+    return await this.temaRepository.update(id, updateTemaDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tema`;
+  async remove(id: number) {
+    await this.findOne(id);
+    return await this.temaRepository.softDelete(id);
   }
 }

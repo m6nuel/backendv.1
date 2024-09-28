@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Tema {
@@ -7,4 +13,10 @@ export class Tema {
 
   @Column()
   tema: string;
+
+  @CreateDateColumn()
+  created: Date;
+
+  @DeleteDateColumn()
+  deleted: Date;
 }
