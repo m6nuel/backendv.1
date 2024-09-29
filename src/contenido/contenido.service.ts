@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateContenidoDto } from './dto/create-contenido.dto';
 import { UpdateContenidoDto } from './dto/update-contenido.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Contenido } from './entities/contenido.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ContenidoService {
-  create(createContenidoDto: CreateContenidoDto) {
-    return 'This action adds a new contenido';
+  constructor(
+    @InjectRepository(Contenido)
+    private readonly contenidoRepository: Repository<Contenido>,
+  ) {}
+  async create(createContenidoDto: CreateContenidoDto) {
+    return await this.contenidoRepository.save(createContenidoDto);
   }
 
-  findAll() {
-    return `This action returns all contenido`;
+  async findAll() {
+    return await this.contenidoRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} contenido`;
+  async findOne(id: number) {
+    const search = await this.contenidoRepository.findOneBy({ id });
+    if (!search) {
+      throw new BadRequestException('No se encontro el contenido');
+    }
+    return search;
   }
 
-  update(id: number, updateContenidoDto: UpdateContenidoDto) {
-    return `This action updates a #${id} contenido`;
+  async update(id: number, updateContenidoDto: UpdateContenidoDto) {
+    await this.findOne(id);
+    return await this.contenidoRepository.update(id, updateContenidoDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} contenido`;
+  async remove(id: number) {
+    await this.findOne(id);
+    return await this.contenidoRepository.softDelete(id);
   }
 }
