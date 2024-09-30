@@ -1,8 +1,10 @@
+import { Tema } from 'src/temas/entities/tema.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -22,4 +24,8 @@ export class User {
 
   @DeleteDateColumn()
   deleted: Date;
+
+  // Relación: Un usuario tiene muchos temas
+  @OneToMany(() => Tema, (tema) => tema.user)
+  temas: Tema[]; // Este campo representará los temas asociados al usuario
 }
