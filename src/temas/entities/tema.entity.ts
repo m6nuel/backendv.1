@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -22,7 +23,10 @@ export class Tema {
   @DeleteDateColumn()
   deleted: Date;
 
-  // Relación: Muchos temas pertenecen a un usuario
-  @ManyToOne(() => User, (user) => user.temas)
-  user: User; // Este campo representará al usuario propietario del tema
+  @ManyToOne(() => User, { eager: true })
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
+  user: User;
+
+  @Column()
+  userId: number;
 }

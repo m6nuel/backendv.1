@@ -4,14 +4,29 @@ import { UpdateTemaDto } from './dto/update-tema.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tema } from './entities/tema.entity';
 import { Repository } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class TemasService {
   constructor(
     @InjectRepository(Tema)
     private readonly temaRepository: Repository<Tema>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
   async create(createTemaDto: CreateTemaDto) {
+    const user = await this.userRepository.findOne({
+      where: { id: createTemaDto.userId },
+      relations: ['user'],
+    });
+
+    // const user = await this.userRepository.findOne({
+    //   where: { email: createTemaDto. },
+    // });
+    if (!user) {
+      throw new BadRequestException('No existe el usuario');
+    }
+    console.log(user);
     return await this.temaRepository.save(createTemaDto);
   }
 
